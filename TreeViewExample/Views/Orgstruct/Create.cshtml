@@ -1,0 +1,28 @@
+﻿@model CompanyEditViewModel
+@{
+    ViewBag.Title = "Create unit";
+}
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="Parent" />
+    <input type="hidden" asp-for="ParentName" />
+    <input type="hidden" asp-for="Id" value="0" />
+    <div class="form-group">
+        <label asp-for="ParentName">Will be part of unit: </label> &nbsp;<span>@Model.ParentName</span>
+        <div>
+            @*<label asp-for="Name"></label>*@
+            <span asp-validation-for="Name" class="text-danger"></span>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        
+        <div><span asp-validation-for="UnitTypeCode" class="text-danger"></span></div>
+        <div>
+            <select asp-for="UnitTypeCode" asp-items="@Model.UnitTypes"></select>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

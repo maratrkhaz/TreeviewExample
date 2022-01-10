@@ -1,0 +1,147 @@
+﻿
+@section Scripts {
+    <script src="~/dist/jstree.min.js"></script>
+    <script>
+        $(function () {
+
+            $('#html1').jstree({
+                'core': {
+                    "animation": 0,
+                    'multiple': false,
+                    "check_callback": function (op, node, par, pos, more) {
+                        if ((op === "move_node" || op === "copy_node") && node.type && node.type == "root") {
+                            return false;
+                        }
+                        if ((op === "move_node" || op === "copy_node") && more && more.core && !confirm('Move the node? ...')) {
+                            return false;
+                        }
+                        //if ((op === "delete_node") && more && more.core && !confirm('Delete the node? ...')) {
+                        //    return false;
+                        //}
+                        return true;
+                    },
+                    'data': {
+                        'url': '/Orgstruct/Nodes',
+                        'data': function (node) {
+                            return { 'id': node.id };
+                        }
+                    }
+                },
+                "types": {
+                    "default": {
+                        "valid_children": ["default", "file"]
+                    },
+                    "file": {
+                        "icon": "jstree-file",
+                        "valid_children": []
+                    }
+                },
+                "plugins": ["themes","dnd","types" ]
+            });
+
+            $('#html1').on('move_node.jstree', function (e, data) {
+                document.getElementById("curId").value = data.node.id;
+                document.getElementById("newparentId").value = data.parent;
+
+                document.getElementById("moveorgform").submit();
+            }).jstree();
+
+            //$('#html1').on('delete_node.jstree', function (e, data) {
+            //    document.getElementById("curId").value = data.node.id;
+
+            //    document.getElementById("deleteorgform").submit();
+            //}).jstree();
+
+            $('#html1').on('changed.jstree', function (e, data) {
+                var i, j, r = [];
+                for (i = 0, j = data.selected.length; i < j; i++) {
+                    r.push(data.instance.get_node(data.selected[i]).id);
+                }
+                document.getElementById("OrgId").value = r;
+            }).jstree();
+
+            $('#editorg').click(function () {
+                this.href = this.href + '/' + document.getElementById("OrgId").value;
+            });
+
+            $('#createorg').click(function () {
+                this.href = this.href + '/' + document.getElementById("OrgId").value;
+            });
+
+            $('#moveorg').click(function () {
+                this.href = this.href + '/' + document.getElementById("OrgId").value;
+            });
+
+            $('#deleteorg').click(function () {
+                if (!document.getElementById("OrgId").value) {
+                    alert("Choose a node to delete.")
+                    return false;
+                }
+
+                if (confirm("Are you sure you want to delete the node?")) {
+                    $.ajax({
+                        url: this.href = this.href + '/' + document.getElementById("OrgId").value,
+                        type: 'DELETE',
+                        //success: function (response) {
+
+                        //}
+                    });
+                }
+                else {
+                    return false;
+                }
+               
+           
+            });
+
+         
+        });
+
+    </script>
+}
+
+<form asp-controller="OrgStruct" asp-action="Move" method="post" id="moveorgform" role="form">
+    @Html.Hidden("curId")
+    @Html.Hidden("newparentId")
+</form>
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("OrgId")
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+
+    <p>
+        <span>
+            <a id="createorg" asp-controller="OrgStruct" asp-action="Create" asp-route-id="">Create</a>
+        </span>
+        <span>
+            <a id="editorg" asp-controller="OrgStruct" asp-action="Edit" asp-route-id="">Edit</a>
+        </span>
+        <span><a id="deleteorg" asp-controller="OrgStruct" asp-action="DeleteNode" asp-route-id="">Delete</a></span>
+    </p>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            @* Demo *@
+                        </div>
+                        <div class="panel-body">
+                            <div id="html1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

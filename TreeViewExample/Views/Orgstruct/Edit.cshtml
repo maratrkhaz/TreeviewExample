@@ -1,0 +1,23 @@
+﻿@*@model TreeViewExample.Dto.UnitsDto*@
+@model TreeViewExample.Models.CompanyEditViewModel
+@{
+    ViewBag.Title = "Edit unit";
+}
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UnitTypeCode" value="cmp" />
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <div><span asp-validation-for="Name" class="text-danger"></span></div>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+
+
